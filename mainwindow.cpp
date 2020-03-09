@@ -84,12 +84,12 @@ void MainWindow::new_question() {
   }
 
   if (op == sum) {
-    auto question = QString("%1 + %2").arg(x).arg(y);
+    auto question = QString("%1 + %2 = ").arg(x).arg(y);
     ui->questionText->setText(question);
     answer = x + y;
   }
   if (op == sub) {
-    auto question = QString("%1 - %2").arg(x).arg(y);
+    auto question = QString("%1 - %2 = ").arg(x).arg(y);
     ui->questionText->setText(question);
     answer = x - y;
   }
