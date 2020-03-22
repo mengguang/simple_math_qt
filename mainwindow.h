@@ -24,6 +24,8 @@ class MainWindow : public QMainWindow {
   void on_userAnswerText_returnPressed();
   void exam_timer_timeout();
 
+  void general_answer_clicked();
+
  private:
   Ui::MainWindow *ui;
   QTimer *timer;
@@ -32,10 +34,10 @@ class MainWindow : public QMainWindow {
   int score = total_questions;
 
   const int op_sum_max_result = 20;
-  const int op_sum_min_result = 2;
+  const int op_sum_min_result = 9;
 
   const int op_sub_max_number_first = 20;
-  const int op_sub_min_number_first = 5;
+  const int op_sub_min_number_first = 9;
 
   const int sum = 0;
   const int sub = 1;
@@ -49,5 +51,7 @@ class MainWindow : public QMainWindow {
   void new_question();
   void prepare_new_exam();
   void stop_exam();
+  void init_answer_button(int answer);
+  void check_answer(int x);
 };
 #endif  // MAINWINDOW_H

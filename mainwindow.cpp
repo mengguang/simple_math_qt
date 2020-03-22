@@ -7,6 +7,15 @@ MainWindow::MainWindow(QWidget *parent)
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(exam_timer_timeout()));
   prepare_new_exam();
+  connect(ui->answer_button_1,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_2,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_3,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_4,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_5,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_6,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_7,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_8,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_9,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -22,7 +31,6 @@ void MainWindow::on_restartButton_clicked() {
     ui->restartButton->setText("Stop");
     ui->notifyText->setText("");
     timer->start(1000);
-    ui->userAnswerText->setFocus();
     new_question();
   }
 }
@@ -31,7 +39,7 @@ void MainWindow::on_userAnswerText_returnPressed() {
   if (started == false) {
     return;
   }
-  auto user_answer = ui->userAnswerText->text();
+  auto user_answer = QString("");
   if (user_answer.length() == 0) {
     return;
   }
@@ -64,7 +72,6 @@ void MainWindow::exam_timer_timeout() {
 }
 
 void MainWindow::new_question() {
-  ui->userAnswerText->clear();
   ui->questionNumberLCD->display(questions + 1);
   const auto op = rand() % 2;
 
@@ -93,6 +100,7 @@ void MainWindow::new_question() {
     ui->questionText->setText(question);
     answer = x - y;
   }
+  init_answer_button(answer);
 }
 
 void MainWindow::prepare_new_exam() {
@@ -105,12 +113,61 @@ void MainWindow::prepare_new_exam() {
   ui->notifyText->setText("");
   ui->timeUsedLCD->display(0);
   ui->questionNumberLCD->display(0);
-  ui->userAnswerText->setText("");
+  init_answer_button(0);
 }
 
 void MainWindow::stop_exam() {
-  ui->notifyText->setText(QString("Score: %1").arg(score));
   started = false;
-  // m_eximTimer.Stop();
+  timer->stop();
+  ui->notifyText->setStyleSheet("QLabel {color : blue; }");
+  ui->notifyText->setText(QString("Final Score: %1").arg(score));
   ui->restartButton->setText("Start");
+}
+
+void MainWindow::init_answer_button(int answer) {
+  int answers[9];
+  for (int i = 0; i < 100; i++) {
+    answers[i % 9] = rand() % 20;
+  }
+  int ax = rand() % 9;
+  answers[ax] = answer;
+  ui->answer_button_1->setText(QString("%1").arg(answers[0]));
+  ui->answer_button_2->setText(QString("%1").arg(answers[1]));
+  ui->answer_button_3->setText(QString("%1").arg(answers[2]));
+  ui->answer_button_4->setText(QString("%1").arg(answers[3]));
+  ui->answer_button_5->setText(QString("%1").arg(answers[4]));
+  ui->answer_button_6->setText(QString("%1").arg(answers[5]));
+  ui->answer_button_7->setText(QString("%1").arg(answers[6]));
+  ui->answer_button_8->setText(QString("%1").arg(answers[7]));
+  ui->answer_button_9->setText(QString("%1").arg(answers[8]));
+}
+
+void MainWindow::check_answer(int x) {
+  if (started == false) {
+    return;
+  }
+  if (x == answer) {
+    ui->notifyText->setStyleSheet("QLabel {color : green; }");
+    ui->notifyText->setText("You Are Right!");
+  } else {
+    score--;
+    ui->notifyText->setStyleSheet("QLabel {color : red; }");
+    ui->notifyText->setText("You Are Wrong!");
+    return;
+  }
+  questions++;
+  if (questions >= total_questions) {
+    stop_exam();
+  } else {
+    new_question();
+  }
+}
+
+void MainWindow::general_answer_clicked() {
+  auto ok = false;
+  auto x = static_cast<QPushButton *>(sender())->text().toInt(&ok, 10);
+  if (!ok) {
+    return;
+  }
+  check_answer(x);
 }
