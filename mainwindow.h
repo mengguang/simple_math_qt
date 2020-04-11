@@ -18,7 +18,9 @@ class MainWindow : public QMainWindow {
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
- private slots:
+  void new_question_mul_div();
+  void new_question_sum_sub();
+private slots:
   void on_restartButton_clicked();
 
   void on_userAnswerText_returnPressed();
@@ -26,7 +28,9 @@ class MainWindow : public QMainWindow {
 
   void general_answer_clicked();
 
- private:
+  void on_btnGetAnswer_clicked();
+
+private:
   Ui::MainWindow *ui;
   QTimer *timer;
 
@@ -41,6 +45,8 @@ class MainWindow : public QMainWindow {
 
   const int sum = 0;
   const int sub = 1;
+  const int mul = 2;
+  const int div = 3;
 
   time_t start_time = 0;
 
