@@ -7,15 +7,24 @@ MainWindow::MainWindow(QWidget *parent)
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(exam_timer_timeout()));
   prepare_new_exam();
-  connect(ui->answer_button_1,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_2,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_3,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_4,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_5,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_6,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_7,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_8,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
-  connect(ui->answer_button_9,SIGNAL(clicked()),this,SLOT(general_answer_clicked()));
+  connect(ui->answer_button_1, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_2, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_3, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_4, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_5, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_6, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_7, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_8, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
+  connect(ui->answer_button_9, SIGNAL(clicked()), this,
+          SLOT(general_answer_clicked()));
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -71,26 +80,58 @@ void MainWindow::exam_timer_timeout() {
   ui->timeUsedLCD->display(static_cast<int>((now - start_time)));
 }
 
-void MainWindow::new_question() {
+void MainWindow::new_question_mul_div() {
+  ui->questionNumberLCD->display(questions + 1);
+  const auto op = rand() % 2 + 2;
+
+  auto x = 0;
+  auto y = 0;
+  QString question;
+
+  if (op == mul) {
+    x = rand() % 10;
+    y = rand() % 10;
+    answer = x * y;
+    question = QString("%1 X %2 = ").arg(x).arg(y);
+  }
+  if (op == div) {
+    answer = rand() % 10;
+    y = rand() % 9 + 1;
+    x = answer * y;
+    question = QString("%1 / %2 = ").arg(x).arg(y);
+  }
+
+  ui->questionText->setText(question);
+  init_answer_button(answer);
+}
+
+void MainWindow::new_question_sum_sub() {
   ui->questionNumberLCD->display(questions + 1);
   const auto op = rand() % 4;
 
   auto x = 0;
   auto y = 0;
+  QString question;
 
   if (op == sum) {
     const auto sum_result = rand() % (op_sum_max_result - op_sum_min_result) +
                             op_sum_min_result + 1;
     x = rand() % (sum_result - 2) + 2;
     y = sum_result - x;
+<<<<<<< HEAD
     auto question = QString("%1 + %2 = ").arg(x).arg(y);
     ui->questionText->setText(question);
     answer = x + y;
+=======
+    answer = x + y;
+    question = QString("%1 + %2 = ").arg(x).arg(y);
+>>>>>>> 301b871d23533aa828bae66ecc9015e93b4c82bb
   }
 
   if (op == sub) {
     x = rand() % (op_sub_max_number_first - op_sub_min_number_first) +
         op_sub_min_number_first;
+<<<<<<< HEAD
     y = rand() % (x - 2) + 2;
     auto question = QString("%1 - %2 = ").arg(x).arg(y);
     ui->questionText->setText(question);
@@ -113,7 +154,24 @@ void MainWindow::new_question() {
     ui->questionText->setText(question);
   }
 
+=======
+    y = rand() % (x - 1) + 1;
+    answer = x - y;
+    question = QString("%1 - %2 = ").arg(x).arg(y);
+  }
+  ui->questionText->setText(question);
+>>>>>>> 301b871d23533aa828bae66ecc9015e93b4c82bb
   init_answer_button(answer);
+}
+
+void MainWindow::new_question() {
+  ui->btnGetAnswer->setText(tr("Answer"));
+  ui->btnGetAnswer->setEnabled(false);
+  if(ui->radioMulDiv->isChecked()) {
+    new_question_mul_div();
+  } else {
+    new_question_sum_sub();
+  }
 }
 
 void MainWindow::prepare_new_exam() {
@@ -185,6 +243,7 @@ void MainWindow::check_answer(int x) {
     score--;
     ui->notifyText->setStyleSheet("QLabel {color : red; }");
     ui->notifyText->setText("You Are Wrong!");
+    ui->btnGetAnswer->setEnabled(true);
     return;
   }
   questions++;
@@ -202,4 +261,9 @@ void MainWindow::general_answer_clicked() {
     return;
   }
   check_answer(x);
+}
+
+void MainWindow::on_btnGetAnswer_clicked()
+{
+  ui->btnGetAnswer->setText(QString::number(answer));
 }
