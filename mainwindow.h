@@ -33,14 +33,16 @@ class MainWindow : public QMainWindow {
   const int total_questions = 100;
   int score = total_questions;
 
-  const int op_sum_max_result = 20;
+  const int op_sum_max_result = 99;
   const int op_sum_min_result = 9;
 
-  const int op_sub_max_number_first = 20;
+  const int op_sub_max_number_first = 50;
   const int op_sub_min_number_first = 9;
 
   const int sum = 0;
   const int sub = 1;
+  const int mul = 2;
+  const int div = 3;
 
   time_t start_time = 0;
 

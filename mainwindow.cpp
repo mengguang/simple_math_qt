@@ -73,7 +73,7 @@ void MainWindow::exam_timer_timeout() {
 
 void MainWindow::new_question() {
   ui->questionNumberLCD->display(questions + 1);
-  const auto op = rand() % 2;
+  const auto op = rand() % 4;
 
   auto x = 0;
   auto y = 0;
@@ -81,25 +81,38 @@ void MainWindow::new_question() {
   if (op == sum) {
     const auto sum_result = rand() % (op_sum_max_result - op_sum_min_result) +
                             op_sum_min_result + 1;
-    x = rand() % (sum_result - 1) + 1;
+    x = rand() % (sum_result - 2) + 2;
     y = sum_result - x;
-  }
-  if (op == sub) {
-    x = rand() % (op_sub_max_number_first - op_sub_min_number_first) +
-        op_sub_min_number_first;
-    y = rand() % (x - 1) + 1;
-  }
-
-  if (op == sum) {
     auto question = QString("%1 + %2 = ").arg(x).arg(y);
     ui->questionText->setText(question);
     answer = x + y;
   }
+
   if (op == sub) {
+    x = rand() % (op_sub_max_number_first - op_sub_min_number_first) +
+        op_sub_min_number_first;
+    y = rand() % (x - 2) + 2;
     auto question = QString("%1 - %2 = ").arg(x).arg(y);
     ui->questionText->setText(question);
     answer = x - y;
   }
+
+  if (op == mul) {
+    x = rand() % (8) + 2;
+    y = rand() % (8) + 2;
+    auto question = QString("%1 X %2 = ").arg(x).arg(y);
+    ui->questionText->setText(question);
+    answer = x * y;
+  }
+
+  if (op == div) {
+    answer = rand() % (8) + 2;
+    y = rand() % (8) + 2;
+    x = answer * y;
+    auto question = QString("%1 / %2 = ").arg(x).arg(y);
+    ui->questionText->setText(question);
+  }
+
   init_answer_button(answer);
 }
 
@@ -124,13 +137,32 @@ void MainWindow::stop_exam() {
   ui->restartButton->setText("Start");
 }
 
-void MainWindow::init_answer_button(int answer) {
-  int answers[9];
-  for (int i = 0; i < 100; i++) {
-    answers[i % 9] = rand() % 20;
+bool in_array(int *array, int size, int n) {
+  for (int i = 0; i < size; i++) {
+    if (n == array[i]) {
+      return true;
+    }
   }
-  int ax = rand() % 9;
-  answers[ax] = answer;
+  return false;
+}
+
+#define TOTAL_ANSWERS 9
+
+void MainWindow::init_answer_button(int answer) {
+  int answers[TOTAL_ANSWERS] = {0};
+  for (uint64_t i = 0; i < TOTAL_ANSWERS; i++) {
+    for (;;) {
+      int n = rand() % 50 + 1;
+      if (!in_array(answers, TOTAL_ANSWERS, n)) {
+        answers[i] = n;
+        break;
+      }
+    }
+  }
+  if (!in_array(answers, TOTAL_ANSWERS, answer)) {
+    int ax = rand() % 9;
+    answers[ax] = answer;
+  }
   ui->answer_button_1->setText(QString("%1").arg(answers[0]));
   ui->answer_button_2->setText(QString("%1").arg(answers[1]));
   ui->answer_button_3->setText(QString("%1").arg(answers[2]));
